@@ -81,7 +81,8 @@ function objSystems.checkCollideBullet(obj,bul)
     local radius = 0
     -- use obj size if it doesn't have a hitbox specified
     if obj.hitbox == nil then radius = obj.size else radius = obj.hitbox end
-    if math.dist(obj.x,obj.y,bul.x,bul.y <= (obj.hitbox+bul.size)) then return true else return false end
+	
+    if math.dist(obj.x,obj.y,bul.x,bul.y) <= (obj.hitbox+bul.size) then return true else return false end
 end
 
 return objSystems

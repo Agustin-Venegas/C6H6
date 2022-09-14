@@ -52,9 +52,10 @@ function objBehaviors.spawnH2(x, y, size, hitbox, hp, speed)
     h2["speed"] = speed
     return h2
 end
+
 function objBehaviors.updateH2(obj, dt)
     -- this is going to be slow as fuck isn't it
-    for BID, bu in pairs(pBullets) do
+    for BID, bul in pairs(pBullets) do
         --mostly for testing atm
         if objS.checkCollideBullet(obj,bul) then H2hit = true end
     end

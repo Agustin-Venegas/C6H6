@@ -57,7 +57,9 @@ function objBehaviors.updateH2(obj, dt)
     -- this is going to be slow as fuck isn't it
     for BID, bul in pairs(pBullets) do
         --mostly for testing atm
-        if objS.checkCollideBullet(obj,bul) then H2hit = true end
+        if objS.checkCollideBullet(obj,bul) then H2hit = 3 end
+		
+		
     end
 end
 

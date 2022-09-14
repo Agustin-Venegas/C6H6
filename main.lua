@@ -10,16 +10,22 @@ nextOID = 1 --counter for working with pObjects
 nextBID = 1 --counter for working with pBullets
 
 --funky debug shit
-H2hit = false
+H2hit = 0
 
 -- non-global local global tables (stuff that stays in this one file's code)
 local plr = {} --player gameplay data tracked seperately (should usually be inside pObjects)
 local keys = {} --keyboard inputs table
 local sprites = {} --stores any ImageData needed for later use
+local enemies = {} --stores H2
 
 -- constants & shortcuts
 local radUp = -math.pi/2 --add to angle calculation to make 0 rad = upward
 local gfx = love.graphics --i call this a lot
+
+
+-- global funcs
+function math.dist(x1,y1, x2,y2) return ((x2-x1)^2+(y2-y1)^2)^0.5 end
+
 
 function love.load()
     -- setup window
@@ -47,11 +53,15 @@ function love.load()
 
     -- setup player
     plr = objB.spawnPlayer(wWidth*0.5, wHeight*0.5, 16, 4, 2.5)
+	
+	--setup exactly one h2
+	enemies[1] = objB.spawnH2(0, 0, 16, 4, 1 , 10)
     
 end
 
 
 function love.update(dt)
+
     -- player movement
     if keys.w or keys.up then plr.yVel = -plr.speed
     elseif keys.s or keys.down then plr.yVel = plr.speed
@@ -86,13 +96,22 @@ function love.update(dt)
         objB.spawnSimpleBullet(plr, 400, plr.angle, 500)
         plr.shotcooldown = 1000/plr.firerate
     end
-
-
+	
+	
     -- update objects and bullets
     for BID, bu in pairs(pBullets) do
         if bu.type == "simple" then objB.updateSimpleBullet(bu, BID, dt) end
     end
-
+	
+	--I dont know if you intended to implement a separate list of bullets and objects so I did it like this
+	for OID, ou in pairs(pObjects) do
+		if ou.type == "H2" then
+			objB.updateH2(ou, dt)
+		end
+	end
+	
+	-- debug text of h2 hitbox
+	if H2hit > 0 then H2hit = H2hit - dt end
 
 end
 
@@ -102,7 +121,9 @@ function love.draw()
     gfx.print(plr.x..","..plr.y.." : "..plr.angle, 0,0)
     --gfx.print("BID "..nextBID.." OID "..nextOID, 0,32)
     --if love.mouse.isDown(1) then gfx.print(plr.shotcooldown.." : mouse good", 50, 50) end
-    if H2hit then gfx.print("H2 bullet collision has happened", 70,70) end
+	
+    if H2hit > 0 then gfx.print("H2 bullet collision has happened", 70,70) end
+	
     -- game UI
     gfx.setColor(plr.color)
     gfx.circle("line", 0, wHeight, 128)
@@ -122,6 +143,13 @@ function love.draw()
         gfx.setColor(bu.color)
         gfx.circle("fill", bu.x,bu.y, bu.size)
     end
+	
+	-- draw objects as circles
+	for OID, ou in pairs(pObjects) do
+		gfx.setColor(0.3,0.3,0.3)
+        gfx.setColor(ou.color)
+        gfx.circle("fill", ou.x,ou.y, ou.size)
+	end
 
     -- player mini UI
     gfx.setColor(0.2,0.8,0.2)

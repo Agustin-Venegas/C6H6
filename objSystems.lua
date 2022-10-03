@@ -28,19 +28,40 @@ function objSystems.despawnBul(BID)
     nextBID = nextBID - 1
 end
 
+-- prototype of all pObjects
+objPrototype = { type = "unknown", x = 0, y = 0, color = {1,1,1,1}, size = 8}
+
+function objPrototype:new(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	return o
+end
+
+function objPrototype:Update(dt)
+end
+
+function objPrototype:Enter(other)
+end
+
+
 -- basis for all pObjects - needs x,y,type parameters
 -- "type" is an identifying string used to choose specific behavior;
     -- it can be left blank, which will give it no behavior
     -- and simply draw a circle on the screen until it is manually despawned
+	
 function objSystems.createObject(x, y, type, color, size)
-    local newObj = {}
+    local newObj = objPrototype:new(nil)
+	
     local OID = self.getNewOID()
     pObjects[OID] = newObj
-    newObj["type"] = type or "unknown"
-    newObj["x"] = x
-    newObj["y"] = y
-    newObj["color"] = color or {1,1,1,1}
-    newObj["size"] = size or 8
+	
+	newObj.x = x or newObj.x
+	newObj.y = y or newObj.y
+	newObj.type = type or "unknown"
+	newObj.color = color or {1,1,1,1}
+	newObj.size = size or newObj.size
+	
     return newObj
 end
 

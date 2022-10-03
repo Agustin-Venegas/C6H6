@@ -1,3 +1,5 @@
+plr = {} --player gameplay data tracked seperately (should usually be inside pObjects)
+
 -- requires
 local spcanv = require "spritecanvas"
 local objB = require "objBehaviors"
@@ -13,7 +15,7 @@ nextBID = 1 --counter for working with pBullets
 H2hit = 0
 
 -- non-global local global tables (stuff that stays in this one file's code)
-local plr = {} --player gameplay data tracked seperately (should usually be inside pObjects)
+plr = {} --player gameplay data tracked seperately (should usually be inside pObjects)
 local keys = {} --keyboard inputs table
 local sprites = {} --stores any ImageData needed for later use
 local enemies = {} --stores H2
@@ -105,9 +107,9 @@ function love.update(dt)
 	
 	--I dont know if you intended to implement a separate list of bullets and objects so I did it like this
 	for OID, ou in pairs(pObjects) do
-		if ou.type == "H2" then
-			objB.updateH2(ou, dt)
-		end
+		ou:Update(dt)
+		
+		--if ou.type == "H2" then objB.updateH2(ou, dt) end
 	end
 	
 	-- debug text of h2 hitbox

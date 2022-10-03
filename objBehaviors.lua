@@ -19,6 +19,7 @@ function objBehaviors.spawnPlayer(x, y, size, hitbox, speed)
     player["speed"] = speed --px/s
     player["color"] = {1,1,1,1}
     player["shotcooldown"] = 0 --ms
+	
     return player
 end
 
@@ -44,23 +45,42 @@ function objBehaviors.updateSimpleBullet(bu, BID, dt)
     bu.decay = bu.decay - (dt*1000)
 end
 
--- creates H2 enemy (does not shoot, simply attempts to collide with the player)
-function objBehaviors.spawnH2(x, y, size, hitbox, hp, speed)
-    local h2 = objS.createObject(x, y, "H2", {1,0.8,0.8,1}, size)
-    h2["hitbox"] = hitbox
-    h2["hp"] = hp
-    h2["speed"] = speed
-    return h2
-end
+
+-- H2 functions
 
 function objBehaviors.updateH2(obj, dt)
     -- this is going to be slow as fuck isn't it
     for BID, bul in pairs(pBullets) do
         --mostly for testing atm
         if objS.checkCollideBullet(obj,bul) then H2hit = 3 end
-		
-		
     end
 end
+
+-- creates H2 enemy (does not shoot, simply attempts to collide with the player)
+function objBehaviors.spawnH2(x, y, size, hitbox, hp, speed)
+    local h2 = objS.createObject(x, y, "H2", {1,0.8,0.8,1}, size)
+    h2["hitbox"] = hitbox
+    h2["hp"] = hp
+    h2["speed"] = speed
+	
+	function h2:Update(dt)
+		if plr.x > self.x+16 then
+			self.x = self.x + 100*dt
+		elseif plr.x<self.x-16 then
+			self.x = self.x - 100*dt
+		end
+		
+		if plr.y > self.y+16 then
+			self.y = self.y + 100*dt
+		elseif plr.y<self.y-16 then
+			self.y = self.y - 100*dt
+		end
+		
+		objBehaviors.updateH2(self, dt)
+	end
+	
+    return h2
+end
+
 
 return objBehaviors
